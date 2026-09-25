@@ -11,6 +11,8 @@ jobs:
       - run: for f in $(find src tests dev -name '*.php'); do php -l "$f"; done
       - run: php tests/TemplatesTest.php
       - run: node --check src/usr/local/emhttp/plugins/docker-template-editor/assets/editor.js
-      - run: php -r 'libxml_use_internal_errors(false); exit(simplexml_load_file("docker-template-editor.plg") ? 0 : 1);'
+      - name: Validate .plg XML
+        run: |
+          php -r 'exit(simplexml_load_file("docker-template-editor.plg") ? 0 : 1);'
       - name: Package builds
         run: build/build.sh "$(date +%Y.%m.%d)" && git checkout -- docker-template-editor.plg
