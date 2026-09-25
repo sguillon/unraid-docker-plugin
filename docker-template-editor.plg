@@ -3,7 +3,7 @@
 <!ENTITY name      "docker-template-editor">
 <!ENTITY author    "sguillon">
 <!ENTITY version   "2026.09.25">
-<!ENTITY md5       "a7aaa47d90d8f3f907994af0465ef153">
+<!ENTITY md5       "e99b6a0e6ec380e52254bc9ee572580d">
 <!ENTITY github    "sguillon/unraid-docker-plugin">
 <!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/&name;.plg">
 <!ENTITY pkgURL    "https://github.com/&github;/releases/download/v&version;/&name;-&version;-noarch-1.txz">
