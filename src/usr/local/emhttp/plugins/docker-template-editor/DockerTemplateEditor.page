@@ -1,0 +1,28 @@
+Menu="Docker:3"
+Title="Templates"
+Tag="edit"
+Cond="$var['fsState'] == 'Started' && exec('/etc/rc.d/rc.docker status | grep -v \"not\"')"
+---
+<?php
+require_once "$docroot/plugins/docker-template-editor/include/Templates.php";
+$dtePlugin = '/plugins/docker-template-editor';
+$dteTheme = $display['theme'] ?? 'white';
+// Unraid 7.0+ bundles the Ace editor; older releases fall back to plain text areas.
+$dteAce = getenv('DTE_ACE_PATH') ?: (is_file("$docroot/plugins/dynamix/javascript/ace/ace.js") ? '/webGui/javascript/ace' : '');
+$dteConfig = [
+    'api' => "$dtePlugin/include/api.php",
+    'csrf' => $var['csrf_token'] ?? '',
+    'templateDir' => DTE::templateDir(),
+    'afterSave' => DTE::setting('AFTER_SAVE', 'ask'),
+    'confirmRecreate' => DTE::setting('CONFIRM_RECREATE', 'true') === 'true',
+    'aceBasePath' => $dteAce,
+    'aceTheme' => in_array($dteTheme, ['black', 'gray']) ? 'ace/theme/tomorrow_night' : 'ace/theme/tomorrow',
+];
+?>
+<link type="text/css" rel="stylesheet" href="<?autov("$dtePlugin/assets/editor.css")?>">
+<div id="dte"><p class="dte-muted">Loading templates…</p></div>
+<?if ($dteAce):?>
+<script src="<?=htmlspecialchars($dteAce)?>/ace.js"></script>
+<?endif;?>
+<script>window.DTE_CONFIG = <?=json_encode($dteConfig, JSON_UNESCAPED_SLASHES)?>;</script>
+<script src="<?autov("$dtePlugin/assets/editor.js")?>"></script>

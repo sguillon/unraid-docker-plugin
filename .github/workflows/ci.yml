@@ -1,0 +1,16 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'   # oldest PHP shipped by supported Unraid releases
+      - run: for f in $(find src tests dev -name '*.php'); do php -l "$f"; done
+      - run: php tests/TemplatesTest.php
+      - run: node --check src/usr/local/emhttp/plugins/docker-template-editor/assets/editor.js
+      - run: xmllint --noout docker-template-editor.plg
+      - name: Package builds
+        run: build/build.sh "$(date +%Y.%m.%d)" && git checkout -- docker-template-editor.plg

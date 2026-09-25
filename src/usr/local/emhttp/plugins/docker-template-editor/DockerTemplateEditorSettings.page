@@ -1,0 +1,48 @@
+Menu="Utilities"
+Title="Docker Template Editor"
+Icon="edit"
+Tag="edit"
+---
+<?php
+require_once "$docroot/plugins/docker-template-editor/include/Templates.php";
+$cfg = DTE::config();
+$dteVersion = @simplexml_load_file('/var/log/plugins/docker-template-editor.plg')['version'] ?? 'dev';
+$dteBackups = count(glob(DTE::backupDir() . '/*/*.xml') ?: []);
+$sel = fn($key, $value) => ($cfg[$key] ?? '') === $value ? 'selected' : '';
+?>
+<form method="POST" action="/update.php" target="progressFrame">
+<input type="hidden" name="#file" value="docker-template-editor/docker-template-editor.cfg">
+<dl>
+  <dt>Editor:</dt>
+  <dd><a href="/Docker">Docker → Templates</a> &nbsp;<span class="dim">(version <?=htmlspecialchars((string)$dteVersion)?>)</span></dd>
+</dl>
+<dl>
+  <dt>After saving a template:</dt>
+  <dd><select name="AFTER_SAVE">
+    <option value="ask" <?=$sel('AFTER_SAVE', 'ask')?>>Ask what to do</option>
+    <option value="recreate" <?=$sel('AFTER_SAVE', 'recreate')?>>Recreate the container</option>
+    <option value="native" <?=$sel('AFTER_SAVE', 'native')?>>Open Unraid's editor to Apply</option>
+    <option value="nothing" <?=$sel('AFTER_SAVE', 'nothing')?>>Nothing (apply later)</option>
+  </select></dd>
+</dl>
+<dl>
+  <dt>Confirm before recreating:</dt>
+  <dd><select name="CONFIRM_RECREATE">
+    <option value="true" <?=$sel('CONFIRM_RECREATE', 'true')?>>Yes</option>
+    <option value="false" <?=$sel('CONFIRM_RECREATE', 'false')?>>No</option>
+  </select></dd>
+</dl>
+<dl>
+  <dt>Stop timeout when recreating (seconds):</dt>
+  <dd><input type="number" name="STOP_TIMEOUT" min="0" max="600" value="<?=htmlspecialchars($cfg['STOP_TIMEOUT'] ?? '30')?>" class="narrow"></dd>
+</dl>
+<dl>
+  <dt>Backups to keep per container:</dt>
+  <dd><input type="number" name="BACKUP_RETENTION" min="1" max="500" value="<?=htmlspecialchars($cfg['BACKUP_RETENTION'] ?? '25')?>" class="narrow">
+    <span class="dim"><?=$dteBackups?> backup(s) in <?=htmlspecialchars(DTE::backupDir())?></span></dd>
+</dl>
+<dl>
+  <dt>&nbsp;</dt>
+  <dd><input type="submit" name="#apply" value="Apply"><input type="button" value="Done" onclick="done()"></dd>
+</dl>
+</form>

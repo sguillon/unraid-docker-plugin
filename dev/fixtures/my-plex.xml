@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>plex</Name>
+  <Repository>lscr.io/linuxserver/plex</Repository>
+  <Registry>https://github.com/orgs/linuxserver/packages/container/package/plex</Registry>
+  <Network>host</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/linuxserver/docker-plex/issues/new/choose</Support>
+  <Project>https://www.plex.tv/</Project>
+  <Overview>Plex organizes video, music and photos from personal media libraries &amp; streams them.</Overview>
+  <Category>MediaServer:Video</Category>
+  <WebUI>http://[IP]:[PORT:32400]/web</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/linuxserver/templates/main/unraid/plex.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/plex-logo.png</Icon>
+  <ExtraParams>--runtime=nvidia</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>1727280000</DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires/>
+  <Config Name="Appdata" Target="/config" Default="" Mode="rw" Description="Where Plex stores its data" Type="Path" Display="advanced" Required="true" Mask="false">/mnt/cache/appdata/plex</Config>
+  <Config Name="Movies" Target="/movies" Default="" Mode="rw" Description="" Type="Path" Display="always" Required="false" Mask="false">/mnt/user/Movies</Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="" Type="Variable" Display="advanced" Required="true" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="" Type="Variable" Display="advanced" Required="true" Mask="false">100</Config>
+  <Config Name="UMASK" Target="UMASK" Default="022" Mode="" Description="" Type="Variable" Display="advanced" Required="false" Mask="false">022</Config>
+  <Config Name="Version" Target="VERSION" Default="docker" Mode="" Description="Set to docker, latest or public" Type="Variable" Display="always" Required="true" Mask="false">docker</Config>
+  <Config Name="Plex Claim" Target="PLEX_CLAIM" Default="" Mode="" Description="Claim token from plex.tv/claim" Type="Variable" Display="always" Required="false" Mask="true">claim-abc123</Config>
+  <Config Name="NVIDIA_VISIBLE_DEVICES" Target="NVIDIA_VISIBLE_DEVICES" Default="" Mode="" Description="" Type="Variable" Display="always" Required="false" Mask="false">all</Config>
+  <Config Name="Web UI" Target="32400" Default="32400" Mode="tcp" Description="" Type="Port" Display="always" Required="false" Mask="false">32400</Config>
+  <Config Name="GPU" Target="/dev/dri" Default="" Mode="" Description="" Type="Device" Display="always" Required="false" Mask="false">/dev/dri</Config>
+  <Config Name="Label" Target="net.unraid.docker.managed" Default="" Mode="" Description="" Type="Label" Display="always" Required="false" Mask="false">dockerman</Config>
+  <TailscaleEnabled>false</TailscaleEnabled>
+</Container>

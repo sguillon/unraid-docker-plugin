@@ -1,0 +1,41 @@
+# Release: push a tag vYYYY.MM.DD (or vYYYY.MM.DDa for a same-day follow-up).
+# Builds the package, publishes it as a GitHub release asset and commits the
+# updated version + MD5 in the .plg to main, which is what Unraid polls for updates.
+name: Release
+on:
+  push:
+    tags: ["v20[0-9][0-9].[0-9][0-9].[0-9][0-9]*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Build package
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          build/build.sh "$VERSION"
+      - name: Release notes from <CHANGES>
+        run: |
+          awk -v v="###$VERSION" '$0==v{on=1;next} /^###/{on=0} /<\/CHANGES>/{on=0} on' docker-template-editor.plg > notes.md
+          [ -s notes.md ] || { echo "No ###$VERSION entry in <CHANGES>"; exit 1; }
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" archive/docker-template-editor-$VERSION-noarch-1.txz --title "$VERSION" --notes-file notes.md
+      - name: Commit updated .plg
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docker-template-editor.plg
+          git commit -m "Release $VERSION [skip ci]" || exit 0
+          git push origin main

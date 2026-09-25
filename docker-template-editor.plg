@@ -1,0 +1,62 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+<!ENTITY name      "docker-template-editor">
+<!ENTITY author    "sguillon">
+<!ENTITY version   "2026.09.25">
+<!ENTITY md5       "a7aaa47d90d8f3f907994af0465ef153">
+<!ENTITY github    "sguillon/unraid-docker-plugin">
+<!ENTITY pluginURL "https://raw.githubusercontent.com/&github;/main/&name;.plg">
+<!ENTITY pkgURL    "https://github.com/&github;/releases/download/v&version;/&name;-&version;-noarch-1.txz">
+<!ENTITY plgPATH   "/boot/config/plugins/&name;">
+]>
+<PLUGIN name="&name;"
+        author="&author;"
+        version="&version;"
+        pluginURL="&pluginURL;"
+        support="https://github.com/&github;/issues"
+        project="https://github.com/&github;"
+        readme="https://github.com/&github;#readme"
+        launch="Settings/DockerTemplateEditorSettings"
+        icon="edit"
+        min="6.12.0">
+
+<CHANGES>
+###2026.09.25
+- Initial release: Templates tab on the Docker page with a grid editor, bulk .env editing, raw XML (Ace on Unraid 7), backups/history and bulk edits across containers.
+- Settings page under Settings > User Utilities.
+</CHANGES>
+
+<!-- Remove package versions left over from previous installs. -->
+<FILE Run="/bin/bash">
+<INLINE>
+find &plgPATH; -maxdepth 1 -name '&name;-*.txz' ! -name '&name;-&version;-noarch-1.txz' -delete 2>/dev/null
+exit 0
+</INLINE>
+</FILE>
+
+<FILE Name="&plgPATH;/&name;-&version;-noarch-1.txz" Run="upgradepkg --install-new">
+<URL>&pkgURL;</URL>
+<MD5>&md5;</MD5>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+mkdir -p &plgPATH;/backups
+echo ""
+echo "----------------------------------------------------"
+echo " &name; &version; installed"
+echo " Open it from Docker > Templates"
+echo "----------------------------------------------------"
+</INLINE>
+</FILE>
+
+<!-- Uninstall: remove the package but keep template backups on the flash drive. -->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+removepkg &name;-&version;-noarch-1
+rm -rf /usr/local/emhttp/plugins/&name;
+find &plgPATH; -maxdepth 1 -name '*.txz' -delete 2>/dev/null
+echo "&name; removed (template backups kept in &plgPATH;/backups)"
+</INLINE>
+</FILE>
+</PLUGIN>

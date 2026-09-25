@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<Container>
+  <Name>legacy</Name>
+  <Repository>example/legacy</Repository>
+  <Environment>
+    <Variable><Name>FOO</Name><Value>bar</Value></Variable>
+  </Environment>
+</Container>
